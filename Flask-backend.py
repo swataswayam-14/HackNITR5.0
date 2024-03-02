@@ -5,32 +5,7 @@ import gdown
 import shutil
 
 import gensim
-
-
-import tensorflow as tf
-import keras
-from keras.layers import Input, Dense, Conv2D
-from keras import Sequential
-from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array, array_to_img
-from keras.models import Model
-from keras.layers import UpSampling2D, MaxPooling2D, Flatten
-import cv2
 import os
-import random
-from tqdm import tqdm
-import numpy as np
-from keras.preprocessing import image
-from keras.models import Sequential
-from keras.layers import BatchNormalization
-from keras.layers import Conv2D
-from keras.layers import MaxPooling2D
-from keras.layers import Activation
-from keras.layers import Dropout
-from keras.layers import concatenate
-from keras.layers import BatchNormalization
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from keras.applications.vgg19 import VGG19
-from keras.applications.vgg19 import preprocess_input
 
 
 import moviepy.editor as mp 
@@ -50,24 +25,6 @@ from torchvision import transforms
 from detect_faces_video import detect_faces
 
 from transformers import pipeline
-
-
-import firebase_admin
-import firebase_admin
-from firebase_admin import db, credentials
-
-cred = credentials.Certificate("serviceAccountKeyRealtimeDatabase.json")
-
-firebase_admin.initialize_app(cred, {'databaseURL': 'https://solution-challenge-app-409f6-default-rtdb.firebaseio.com/'})
-# db = firestore.client()
-
-# data_locations = []
-
-# for i in range(3):
-#     db_ref = db.collection('locations').document('L' + str(i)).get()
-#     data_locations.append((db_ref._data['id'], db_ref._data['title'], db_ref._data['coordinates']))
-# print(data_locations)
-    # print(db_ref._data)
 
 
 from flask_cors import CORS
@@ -167,7 +124,7 @@ def identifyImage(folder_path):
 
 
 def isDrowsy(file_path):
-    image = load_img(file_path, target_size=(224, 224, 3))
+    # image = load_img(file_path, target_size=(224, 224, 3))
     # img_array = img_to_array(image)
     # img_array = preprocess_input(img_array)
     # img_array = np.expand_dims(img_array, axis=0)
@@ -178,7 +135,7 @@ def isDrowsy(file_path):
     pretrained_vit_loaded.load_state_dict(torch.load('pretrained_vit_modified.pth'))
     pretrained_vit_loaded.eval()  # Set model to evaluation mode
 
-    img = Image.open(image)
+    img = Image.open(file_path)
 
     # Define the transformation to apply to the image
     transform = transforms.Compose([
@@ -211,7 +168,7 @@ def emotions(file_path):
 def speechRecognition():
 
    
-    # count = 0
+    count = 0
     full_path = request.full_path
 
     # Extract the 'query' parameter from the full path
@@ -246,14 +203,15 @@ def speechRecognition():
     video = mp.VideoFileClip("static/video.mp4").subclip(timestamp1, timestamp2)
     count += 1
 
-    audio_file = video.audio 
-    audio_file.write_audiofile("static/audio.wav") 
+    # audio_file = video.audio 
+    # audio_file.write_audiofile("static/audio.wav") 
 
-    r = sr.Recognizer() 
-
+    # r = sr.Recognizer() 
+    video.write_videofile("static/video_clipped_{}.mp4".format(count), codec='libx264', audio_codec='aac')
+    
     audio_model = whisper.load_model('base.en')
     option = whisper.DecodingOptions(language='en')
-    text = audio_model.transcribe("static/video.mp4")
+    text = audio_model.transcribe("static/video_clipped_{}.mp4".format(count))
     # with sr.AudioFile("static/audio.wav") as source: 
     #     data = r.record(source) 
 
@@ -265,36 +223,36 @@ def speechRecognition():
     keywords_dict = {}
     text_data.append(text['text'])
     
-    openai.api_key = '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'
+    # openai.api_key = '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'
 
-    URL = "https://api.openai.com/v1/chat/completions"
-    prompt_template = "give me just the three to five most relevant (descending order of importance)  topics centered around the provided text. Remember, ONLY 3 to 5 topics and just the topics' names and nothing else in the output"
+    # URL = "https://api.openai.com/v1/chat/completions"
+    # prompt_template = "give me just the three to five most relevant (descending order of importance)  topics centered around the provided text. Remember, ONLY 3 to 5 topics and just the topics' names and nothing else in the output"
 
-    # # Replace placeholder with actual content
-    # name = "John"
-    # prompt = prompt_template.replace()
+    # # # Replace placeholder with actual content
+    # # name = "John"
+    # # prompt = prompt_template.replace()
 
 
-    payload = {
-    "model": "gpt-3.5-turbo",
-    "prompt": prompt_template,
-    "messages": [{"role": "user", "content": text_data[0]}],
-    "temperature" : 1.0,
-    "top_p":1.0,
-    "n" : 1,
-    "stream": False,
-    "presence_penalty":0,
-    "frequency_penalty":0,
-    }
+    # payload = {
+    # "model": "gpt-3.5-turbo",
+    # "prompt": prompt_template,
+    # "messages": [{"role": "user", "content": text_data[0]}],
+    # "temperature" : 1.0,
+    # "top_p":1.0,
+    # "n" : 1,
+    # "stream": False,
+    # "presence_penalty":0,
+    # "frequency_penalty":0,
+    # }
 
-    headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {openai.api_key}"
-    }
+    # headers = {
+    # "Content-Type": "application/json",
+    # "Authorization": f"Bearer {openai.api_key}"
+    # }
 
-    response = requests.post(URL, headers=headers, json=payload, stream=False)
+    # response = requests.post(URL, headers=headers, json=payload, stream=False)
     
-    return response.json()
+    return text_data
 
 
 def keywords(text):
