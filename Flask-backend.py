@@ -252,11 +252,40 @@ def speechRecognition():
 
     # response = requests.post(URL, headers=headers, json=payload, stream=False)
     
-    return text_data
+    keywords = keywords(text)
+    return keywords
 
 
 def keywords(text):
-        pass
+       
+
+    api_key = "9a839909811349021622ac51fbee62f7"
+
+   
+    text = "is do one type of machine learning, which is called supervised learning. Lets take a look at what that means. Supervised machine learning, or more commonly,"
+
+ 
+    url = "https://api.meaningcloud.com/topics-2.0"
+
+
+    params = {
+        "key": api_key,
+        "lang": "en",
+        "txt": text
+    }
+
+ 
+    response = requests.post(url, data=params)
+    fetched = []
+
+    if response.status_code == 200:
+   
+        topics = response.json()["concept_list"]
+        for topic in topics:
+            fetched.append(topic["form"])
+    else:
+        print("Error:", response.text)
+    return fetched
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
