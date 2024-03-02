@@ -211,7 +211,7 @@ def emotions(file_path):
 def speechRecognition():
 
    
-    count = 
+    # count = 0
     full_path = request.full_path
 
     # Extract the 'query' parameter from the full path
