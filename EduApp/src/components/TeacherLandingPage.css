@@ -1,0 +1,42 @@
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #222;
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .button {
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.2s ease-in-out;
+    margin: 0.5rem;
+    text-transform: uppercase;
+  }
+  
+  .button:hover {
+    background-color: #4CAF50;
+  }
+  
+  .button.active {
+    background-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+    animation: buttonClick 0.2s ease-in-out;
+  }
+  
+  @keyframes buttonClick {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.05);
+    }
+  }
+  

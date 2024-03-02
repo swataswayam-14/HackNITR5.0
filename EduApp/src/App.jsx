@@ -2,33 +2,42 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-
+import LandingPage from './components/LandingPage'
+import StudentProfile from './components/StudentProfile'
+import CourseSection from './components/CourseSection'
+import {BrowserRouter as Router , Route, Routes} from "react-router-dom"
+import { courses } from './components/courses'
+import TeacherProfile from './components/TeacherProfile'
+import { students } from './components/students'
+import TeacherStudents from './components/TeacherStudents'
+import LectureComponent from './components/LectureComponent'
+import TeacherSignup from './components/TeacherSignUp'
+import TeacherSignIn from './components/TeacherSignIn'
+import TeacherLandingPage from './components/TeacherLandingPage'
+import StudentLandingPage from './components/StudentLandingPage'
+import StudentSignIn from './components/StudentSignIn'
+import StudentSignup from './components/StudentSignUp'
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Router>
+    <Routes>
+      <Route path='/' element={<LandingPage/>}/>
+      <Route path="/student" element={<StudentProfile/>}/>
+      <Route path="/courses" element={<CourseSection courses = {courses}/>}/>
+      <Route path = "/teacher/:id" element={<TeacherProfile/>}/>
+      <Route path="/teacherstudent" element={<TeacherStudents students={students}/>}/>
+      <Route path='/lectures' element={<LectureComponent/>}/>
+      <Route path='/teachersignup' element={<TeacherSignup/>}/>
+      <Route path= '/teachersignin' element = {<TeacherSignIn/>}/>
+      <Route path='/teacherlandingpage' element={<TeacherLandingPage/>}/>
+      <Route path='/studentlandingpage' element={<StudentLandingPage/>}/>
+      <Route path='/studentsignin' element={<StudentSignIn/>}/>
+      <Route path='/studentsignup' element={<StudentSignup/>}/>
+      <Route path='/student/:id' element={<StudentProfile/>}/>
+      </Routes>
+    </Router>
   )
 }
 

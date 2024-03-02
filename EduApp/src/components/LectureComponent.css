@@ -1,0 +1,48 @@
+/* Base styles for lectures-container */
+.lectures-container {
+    background-color: #77fcfc;
+    display: flex;
+    flex-wrap: wrap; /* Allow cards to wrap onto multiple lines */
+    justify-content: space-between; /* Evenly distribute cards horizontally */
+    margin: 2rem auto; /* Add some margin for better spacing */
+    width: 80%; /* Limit container width to a reasonable size */
+    border-radius: 5px; /* Add subtle border radius for a softer look */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle box-shadow for depth */
+    padding: 1rem; /* Add some padding inside the container */
+  }
+  
+  /* Styles for LectureCard component (assuming it's defined elsewhere) */
+  .LectureCard {
+    background-color: #fff; /* Light background color for cards */
+    border: 1px solid #ddd; /* Light border for cards */
+    border-radius: 5px; /* Match container's border radius */
+    padding: 1rem; /* Add some padding inside cards */
+    margin: 0.5rem; /* Add some margin between cards */
+    box-sizing: border-box; /* Ensure padding and border don't affect width/height */
+    cursor: pointer; /* Make cards clickable (optional) */
+    transition: all 0.2s ease-in-out; /* Smooth transition for hover/focus effects */
+  }
+  
+  /* Hover/focus effects for LectureCard */
+  .LectureCard:hover,
+  .LectureCard:focus {
+    transform: scale(1.02); /* Slight scale-up on hover/focus */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Enhance shadow on hover/focus */
+  }
+  
+  /* Animation for card loading (optional) */
+  .LectureCard.animate {
+    animation: card-appear 0.5s ease-in-out forwards;
+  }
+  
+  @keyframes card-appear {
+    from {
+      opacity: 0;
+      transform: translateY(20px); /* Cards appear from slightly below */
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
