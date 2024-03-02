@@ -27,12 +27,21 @@ const TeacherProfile = () => {
   getDetails()
   return (
     <div className="teacher-profile">
-      <h2 className='teacher-name'>Teacher Profile</h2>
-      <p className='teacher-username'><b>Username:</b>{username}</p>
-      <p className='teacher-email'><b>Email:</b>{email}</p>
-      <button onClick={()=>{
-        navigate('/teacherstudent')
-      }}>See Student details</button>
+        <h2 className="teacher-name">Teacher Profile</h2>
+        <p className="teacher-username"><b>Username:</b> {username}</p>
+        <p className="teacher-email"><b>Email:</b> {email}</p>
+
+        <div className="button-container">
+        <button onClick={() => navigate('/teacherstudent')} className="see-student-details">
+            See Student details
+        </button>
+        <button onClick={()=>{
+            navigate(`/addcourse/${id}`)
+        }} className="add-course-details">Add Course details</button>
+        <button onClick={()=>{
+            navigate(`/lectures/${id}`)
+        }} className="add-course-details">View All Courses</button>
+        </div>
     </div>
   );
 };

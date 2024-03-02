@@ -17,6 +17,13 @@ import TeacherLandingPage from './components/TeacherLandingPage'
 import StudentLandingPage from './components/StudentLandingPage'
 import StudentSignIn from './components/StudentSignIn'
 import StudentSignup from './components/StudentSignUp'
+import AddCourseDetails from './components/AddCourseDetails'
+import AllCourses from './components/AllCourses'
+import BuyCourse from './components/BuyCourse'
+import StudentPlatform from './components/StudentPlatform'
+import AnalysisTable from './components/Analysis'
+import BuyedCourses from './components/BuyedCourses'
+import StudentEnrolled from './components/StudentEnrolled'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -28,7 +35,7 @@ function App() {
       <Route path="/courses" element={<CourseSection courses = {courses}/>}/>
       <Route path = "/teacher/:id" element={<TeacherProfile/>}/>
       <Route path="/teacherstudent" element={<TeacherStudents students={students}/>}/>
-      <Route path='/lectures' element={<LectureComponent/>}/>
+      <Route path='/lectures/:id' element={<LectureComponent/>}/>
       <Route path='/teachersignup' element={<TeacherSignup/>}/>
       <Route path= '/teachersignin' element = {<TeacherSignIn/>}/>
       <Route path='/teacherlandingpage' element={<TeacherLandingPage/>}/>
@@ -36,6 +43,12 @@ function App() {
       <Route path='/studentsignin' element={<StudentSignIn/>}/>
       <Route path='/studentsignup' element={<StudentSignup/>}/>
       <Route path='/student/:id' element={<StudentProfile/>}/>
+      <Route path='/addcourse/:id' element={<AddCourseDetails/>}/>
+      <Route path='/allcourse' element={<AllCourses/>}/>
+      <Route path='/buycourse/:id' element={<BuyCourse/>}/>
+      <Route path='/studentplatform/:id' element={<StudentPlatform/>}/>
+      <Route path='/buyedcourses/:id' element={<BuyedCourses/>}/>
+      <Route path='/studentpurchase/:id' element={<StudentEnrolled/>}/>
       </Routes>
     </Router>
   )

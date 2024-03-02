@@ -27,6 +27,10 @@ const StudentSchema = new mongoose.Schema({
         type:String,
         required:true,
         minLength:6
+    },
+    buyedCourse: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Course' // Reference to the Course model
     }
 })
 

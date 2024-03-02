@@ -1,6 +1,6 @@
 const express = require("express")
 const StudentRouter = express.Router()
-const {Student} = require("../db/index")
+const {Student, Course} = require("../db/index")
 const zod = require("zod")
 const jwt = require("jsonwebtoken")
 const authMiddleWare = require("../authMiddleWare")
@@ -101,4 +101,59 @@ StudentRouter.get('/profile/:id',async(req,res)=>{
     }
 })
 
+StudentRouter.get('/allcourse',async(req,res)=>{
+    try {
+        const allcourse = await Course.find()
+        if(allcourse){
+            return res.json({
+                allcourse
+            })
+        }
+    } catch (error) {
+        return res.json({
+            msg:'Network issue'
+        })
+    }
+})
+
+StudentRouter.post('/buycourse/:name', async(req,res)=>{
+    try {
+        const name = req.params.name
+        const course = await Course.findOne({
+            name:name
+        })
+        if(course){
+            const email = req.body.email
+            const student = await Student.findOneAndUpdate(
+                { email },
+                {
+                  $push: { buyedCourse: course._id}
+                },
+                { new: true }
+              );
+            console.log(student);
+        }
+    } catch (error) {
+        return res.json({
+            msg:'Network issue'
+        })
+    }
+})
+
+StudentRouter.get('/buyedcourse/:id', async (req, res) => {
+    try {
+        const student = await Student.findById(req.params.id).populate('buyedCourse');
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        
+        const courses = student.buyedCourse.map(course => course._id);
+        
+        const courseDetails = await Course.find({ _id: { $in: courses } });
+        console.log(courseDetails);
+        res.status(200).json(courseDetails);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 module.exports = StudentRouter

@@ -31,8 +31,14 @@ const StudentProfile = () => {
       <p className='teacher-username'><b>Username:</b>{username}</p>
       <p className='teacher-email'><b>Email:</b>{email}</p>
       <button onClick={()=>{
-        navigate('/courses')
+        navigate('/allcourse')
       }}>See Courses</button>
+      <button onClick={()=>{
+        navigate('/studentplatform/:id')
+      }}>Check Analysis</button>
+      <button onClick={()=>{
+        navigate(`/buyedcourses/${id}`)
+      }}>Your Purchases</button>
     </div>
   );
 };

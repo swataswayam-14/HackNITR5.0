@@ -1,6 +1,6 @@
 const express = require("express")
 const TeacherRouter = express.Router()
-const {Student, Teacher} = require("../db/index")
+const {Student, Teacher, Course} = require("../db/index")
 const zod = require("zod")
 const jwt = require("jsonwebtoken")
 const authMiddleWare = require("../authMiddleWare")
@@ -102,5 +102,64 @@ TeacherRouter.get('/profile/:id',async(req,res)=>{
     }
 })
 
+TeacherRouter.post('/addcoursedetails/:id', async(req,res)=>{
+    try {
+        const courseName = req.body.courseName
+        const courseDetails = req.body.courseDetails
+        const id = req.params.id
+
+        const course = await Course.create({
+            name:courseName,
+            description:courseDetails,
+            Id1:id
+        })
+        if(course){
+            return res.json({
+                userId:id
+            })
+        }
+    } catch (error) {
+        return res.json({
+            msg:"Network issue"
+        })
+    }
+})
+
+
+TeacherRouter.get('/getcourses/:id', async (req,res)=>{
+    try {
+        const id = req.params.id
+        const courses = await  Course.find({
+            Id1:id
+        })
+        if(courses){
+            console.log(courses);
+            return res.json({
+                courses
+            })
+        }else{
+            return res.json({
+                msg:'There is no course available for this teacher'
+            })
+        }
+    } catch (error) {
+        return res.json({
+            msg:'There is some problem  in server'
+        })
+    }
+})
+
+TeacherRouter.get('/coursestudents/:title', async (req, res) => {
+
+    try {
+        console.log('request came');
+        const course = await Course.findOne({ name: req.params.title }); // Find the course by name
+        const students = await Student.find({ buyedCourse: course._id }); // Find students who bought the course
+        console.log(students);
+        res.send(students); // Send the filtered students in response
+    } catch (error) {
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
+})
 
 module.exports = TeacherRouter
