@@ -8,6 +8,9 @@ import gensim
 import os
 
 
+from youtubesearchpython import VideosSearch
+ 
+
 import moviepy.editor as mp 
 import speech_recognition as sr 
 
@@ -251,9 +254,10 @@ def speechRecognition():
     # }
 
     # response = requests.post(URL, headers=headers, json=payload, stream=False)
-    
+    keywords_dict= {}
     keywords = keywords(text)
-    return keywords
+    keywords_dict['keywords'] = keywords
+    return keywords_dict
 
 
 def keywords(text):
@@ -277,7 +281,7 @@ def keywords(text):
  
     response = requests.post(url, data=params)
     fetched = []
-
+    final = {}
     if response.status_code == 200:
    
         topics = response.json()["concept_list"]
@@ -285,7 +289,25 @@ def keywords(text):
             fetched.append(topic["form"])
     else:
         print("Error:", response.text)
-    return fetched
+    
+    final['keyowrds'] = keywords
+    links = fetchRecommendations(keywords)
+    final['recommendations']  = links
+    return final
+
+# @app.route('/fetchRecommendations', methods=['GET', 'POST'])
+def fetchRecommendations(keywords):
+    
+    for word in keywords:
+        videos_search = VideosSearch(keyword, limit=10)
+
+        video_urls = []
+        for video in videos_search.result()["result"]:
+            video_urls.append(video["link"])
+
+        for url in video_urls:
+            print(url)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
