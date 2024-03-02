@@ -5,7 +5,8 @@ import os
 import shutil
 
 directory = "static/"
-shutil.rmtree(directory)
+if(os.path.exists(directory)):
+    shutil.rmtree(directory)
 os.makedirs(directory)
 
 def detect_faces(video_path):
