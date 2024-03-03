@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request, render_template
 import requests, pickle
 import gdown 
 import shutil
-
+import math
 
 from mtcnn.mtcnn import MTCNN
 import cv2 
@@ -97,8 +97,8 @@ def predict():
     #     f.write(data.content)
     # filename = 'https://firebasestorage.googleapis.com/v0/b/solution-challenge-app-409f6.appspot.com/o/user-images%2F2cznu8kGbtbbCZ3s22c9E1AnqG92.jpg?alt=media&token=91b2b18f-826a-4d15-bdf6-e940a6d25ec7'
     
-    # classes = identifyImage('static')
-    # print(classes)
+    classes = identifyImage('detected_faces_videos')
+    print(classes)
 
     # if classes[0] < 0.5:
     #     flag = False
@@ -112,7 +112,7 @@ def predict():
 def detect_faces(video_path):
     detector  = MTCNN()
     # print("Hi")
-    interval = 60
+    interval = 20
     uuid = video_path.split('&')[0].split("/")[5]
     print(uuid)
     url = "https://drive.google.com/uc?id={}".format(uuid)
@@ -120,15 +120,18 @@ def detect_faces(video_path):
     print(url)
     # print(timestamp1)
     # print(timestamp2)
-    gdown.download(url, output_file, quiet=False)
-    
-    cap = cv2.VideoCapture('static/video.mp4')
+    # gdown.download(url, output_file, quiet=False)
+    # response = requests.get(url))
+    # with open("static/video.mp4", 'wb') as f:
+    #     f.write(response.content)
+        
+    cap = cv2.VideoCapture('demo-student.mp4')
 
 
     frame_count = 0
     count = 0
 
-    while cap.isOpened():
+    while True:
         
         ret, frame = cap.read()
         
@@ -137,16 +140,18 @@ def detect_faces(video_path):
         
         current_time = frame_count / cap.get(cv2.CAP_PROP_FPS)
         
-        
-        if(current_time % interval == 0):
+        # print(math.floor(current_time % interval) == 0)
+        if(round(current_time, 1) % interval == 0):
             
+            # print("Hi")
             
             result_list = detector.detect_faces(frame)
             for results in result_list:
-                if(results['conf'] > 0.99):
+                if(results['confidence'] > 0.7):
+                    print(results)
                     x, y, width, height = results['box']
                     cropped_image = frame[y:y+height, x:x+width]
-                    cv2.imwrite(os.path.join("detected_faces_videos", frame, "_{}.jpg".format(count)))
+                    cv2.imwrite(os.path.join("detected_faces_videos", "_{}.jpg".format(count)), cropped_image)
                     count += 1
                     
         
@@ -165,29 +170,37 @@ def identifyImage(folder_path):
     drowsiness = []
     emotions = []
     timestamps = []
+    final = []
     for img in os.listdir(folder_path):
         emt = []
         isDrowsiness = []
         time = []
+        temp = []
         # value = isDrowsy(os.path.join(folder_path, img))
         value=random.randint(1,3)
         if(value == 1):
             isDrowsiness.append("Yes")
             emt.append(-1)
             time.append("Timestamp_{}".format(count))
+            temp.append((time, emt, isDrowsiness))
         else:
             
             isDrowsiness.append("No")
-            emt.append(emotions(os.path.join(folder_path, img)))
+            print(os.path.join(folder_path, img))
+            pred_emotions = emotions(os.path.join(folder_path, img))
+            emt.append(pred_emotions)
             time.append("Timestamp_{}".format(count))
-        emotions.append(emt)
-        drowsiness.append(isDrowsiness)
-        timestamps.append(time)
+            temp.append((time, emt, isDrowsiness))
+        # emotions.append(emt)
+        # drowsiness.append(isDrowsiness)
+        # timestamps.append(time)
         
-        for key, value in zip(emotions, drowsiness, timestamps):
-            dict[key] = value
+        # for key, value in zip(emotions, drowsiness, timestamps):
+        #     dict[key] = value
         
         # dict['{}EmotionTimestamp_{}'.format(count)] = pred
+        final.append(temp)
+        print(final)
         count += 1
         
        
@@ -242,10 +255,11 @@ def isDrowsy(file_path):
     if predicted_class == 1:
         return True
     
+pipe = pipeline("image-classification", model="dima806/facial_emotions_image_detection")
     
 def emotions(file_path):
 
-    pipe = pipeline("image-classification", model="dima806/facial_emotions_image_detection")
+    
     # image = cv2.imread("/content/sad.jpeg")
     y_pred = pipe.predict(file_path)
     print(y_pred)
