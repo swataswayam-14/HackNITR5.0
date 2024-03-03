@@ -1,0 +1,49 @@
+/* Student Component Styles */
+.student-component {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    border-radius: 10px; /* Rounded corners */
+    background-color: #292b2c; /* Dark background */
+    color: #fff; /* Light text color */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    animation: slide-in 0.5s ease-in-out forwards; /* Slide-in animation */
+  }
+  
+  .student-info {
+    flex: 1;
+    text-align: left; /* Align text left */
+  }
+  
+  .button-container {
+    flex: 1;
+    text-align: center; /* Center button horizontally */
+  }
+  
+  .course-details-button {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #30a7e5; /* Blue button color */
+    color: #fff;
+    transition: all 0.2s ease-in-out; /* Button hover effect */
+  }
+  
+  .course-details-button:hover {
+    transform: scale(1.05); /* Slight button hover scale */
+  }
+  
+  /* Animations (Optional) */
+  @keyframes slide-in {
+    from {
+      transform: translateY(20px); /* Start from slightly down */
+      opacity: 0; /* Start invisible */
+    }
+    to {
+      transform: translateY(0); /* Slide up to normal position */
+      opacity: 1; /* Become fully visible */
+    }
+  }
+  

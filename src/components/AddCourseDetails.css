@@ -1,0 +1,72 @@
+/* AddCourseDetails.module.css */
+.add-course-details {
+    background-color: #202124; /* Dark grayish background */
+    color: #fff; /* White text color for good contrast */
+    padding: 20px;
+    border-radius: 5px;
+    min-width: 500px; /* Optional: Set a minimum width for the form */
+  
+    /* Adapt styling for a cleaner presentation: */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* Add vertical spacing between form elements */
+  }
+  
+  .add-course-details h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-align: center; /* Center align the heading */
+  }
+  
+  .add-course-details label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block; /* Display labels on their own lines */
+  }
+  
+  .add-course-details input,
+  .add-course-details textarea {
+    background-color: #303134; /* Slightly darker background for inputs */
+    color: #fff;
+    padding: 10px 15px;
+    border: 1px solid #494f56; /* Subtle border */
+    border-radius: 4px;
+    width: 100%; /* Make inputs full-width */
+    resize: none; /* Remove textarea resize handle */
+    box-shadow: none; /* Remove default shadow */
+  }
+  
+  .add-course-details input:focus,
+  .add-course-details textarea:focus {
+    outline: 2px solid #707a83; /* Focus outline with subtle blue */
+  }
+  
+  .add-course-details button {
+    background-color: #4e5f70; /* Blue button color */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .add-course-details button:hover {
+    background-color: #687e93; /* Slightly darker blue on hover */
+  }
+  
+  .add-course-details button[disabled] {
+    background-color: #b0bec5; /* Grayed-out color for disabled button */
+    cursor: not-allowed; /* Indicate disabled state visually */
+  }
+  
+  .add-course-details .error-message {
+    color: #F06548; /* Red for error messages */
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #F8DDDC; /* Slightly lighter red for background */
+  }
+  

@@ -1,0 +1,49 @@
+.teacher-profile {
+    background-color: #212529; /* Dark charcoal background */
+    color: #dfe1e6; /* Light text for readability */
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    display: flex; /* Arrange elements horizontally */
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center content horizontally */
+  }
+  
+  .teacher-name {
+    font-size: 1.5rem;
+    margin-bottom: 10px; /* Space between heading and details */
+    color: #e9ecef; /* Slightly brighter text for emphasis */
+  }
+  
+  .teacher-username,
+  .teacher-email {
+    font-weight: bold; /* Bold labels for clarity */
+    margin-bottom: 5px;
+  }
+  
+  .teacher-email b {
+    color: #878b96; /* Dimmer text for email address */
+  }
+
+  .button-container {
+    display: flex; /* Arrange buttons horizontally */
+    justify-content: space-between; /* Distribute buttons evenly */
+    margin-top: 1rem; /* Add some spacing after content */
+  }
+
+  .see-student-details,
+  .add-course-details {
+    background-color: #4CAF50; /* Green color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out; /* Add smooth hover effect */
+  }
+
+  .see-student-details:hover,
+  .add-course-details:hover {
+    background-color: #3e8e41; /* Darker green on hover */
+  }
