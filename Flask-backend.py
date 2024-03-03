@@ -171,11 +171,13 @@ def identifyImage(folder_path):
     emotion = []
     timestamps = []
     final = []
+   
+    temp = []
     for img in os.listdir(folder_path):
+        
         emt = []
         isDrowsiness = []
         time = []
-        temp = []
         # value = isDrowsy(os.path.join(folder_path, img))
         value=random.randint(1,3)
         if(value == 1):
@@ -183,10 +185,11 @@ def identifyImage(folder_path):
             emt.append(-1)
             time.append("Timestamp_{}".format(count))
             temp.append((time, emt, isDrowsiness))
-        else:
+            
+        elif(value == 2):
             
             isDrowsiness.append("No")
-            print(os.path.join(folder_path, img))
+            # print(os.path.join(folder_path, img))
             pred_emotions = emotions(os.path.join(folder_path, img))
             emt.append(pred_emotions)
             time.append("Timestamp_{}".format(count))
@@ -199,12 +202,12 @@ def identifyImage(folder_path):
         #     dict[key] = value
         
         # dict['{}EmotionTimestamp_{}'.format(count)] = pred
-        final.append(temp)
-        print(final)
+      
         count += 1
-        
+    final.append(temp)
+    print(final)
        
-    return dict
+    return final
 
 
 def isDrowsy(file_path):
@@ -262,7 +265,7 @@ def emotions(file_path):
     
     # image = cv2.imread("/content/sad.jpeg")
     y_pred = pipe.predict(file_path)
-    print(y_pred)
+    # print(y_pred)
     return y_pred[0]['label']
     
     
