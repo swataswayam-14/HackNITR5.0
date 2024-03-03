@@ -168,7 +168,7 @@ def identifyImage(folder_path):
     dict = {}
     count = 0
     drowsiness = []
-    emotions = []
+    emotion = []
     timestamps = []
     final = []
     for img in os.listdir(folder_path):
@@ -191,7 +191,7 @@ def identifyImage(folder_path):
             emt.append(pred_emotions)
             time.append("Timestamp_{}".format(count))
             temp.append((time, emt, isDrowsiness))
-        # emotions.append(emt)
+        # emotion.append(emt)
         # drowsiness.append(isDrowsiness)
         # timestamps.append(time)
         
