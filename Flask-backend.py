@@ -125,6 +125,7 @@ def detect_faces(video_path):
     # with open("static/video.mp4", 'wb') as f:
     #     f.write(response.content)
         
+    # cap = cv2.VideoCapture('demo-student.mp4')
     cap = cv2.VideoCapture('demo-student.mp4')
 
 
