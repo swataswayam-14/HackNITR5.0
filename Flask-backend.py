@@ -4,12 +4,21 @@ import requests, pickle
 import gdown 
 import shutil
 
+
+from mtcnn.mtcnn import MTCNN
+import cv2 
+import os
+
+import shutil
+
+
+
 import gensim
 import os
 
-
+import random
 from youtubesearchpython import VideosSearch
- 
+import torchvision
 
 import moviepy.editor as mp 
 import speech_recognition as sr 
@@ -36,6 +45,15 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+directory = "static/"
+if(os.path.exists(directory)):
+    shutil.rmtree(directory)
+os.makedirs(directory)
+
+
+if(os.path.exists("detected_faces_videos")):
+    shutil.rmtree("detected_faces_videos")
+os.makedirs("detected_faces_videos")
 
 
 @app.route('/')
@@ -67,19 +85,19 @@ def predict():
 
     # Extract the 'query' parameter from the full path
     query_parameter = full_path.split('query=')[1]
-    # print("Filename is : ", query_parameter) 
+    print("Filename is : ", query_parameter) 
     count= 0
-    
+    classes = []
     # //Download video
-    gdown.download(query_parameter, 'static/video.mp4', quiet=False)
-    video_path = "static/video.mp4"
-    detect_faces(video_path)
+    # gdown.download(query_parameter, 'static/video.mp4', quiet=False)
+    # video_path = "static/video.mp4"
+    detect_faces(query_parameter)
     # with open('static/mask/mask_{}.jpg'.format(count), 'wb') as f:
     #     data = requests.get(query_parameter)
     #     f.write(data.content)
     # filename = 'https://firebasestorage.googleapis.com/v0/b/solution-challenge-app-409f6.appspot.com/o/user-images%2F2cznu8kGbtbbCZ3s22c9E1AnqG92.jpg?alt=media&token=91b2b18f-826a-4d15-bdf6-e940a6d25ec7'
     
-    classes = identifyImage('static')
+    # classes = identifyImage('static')
     # print(classes)
 
     # if classes[0] < 0.5:
@@ -91,6 +109,55 @@ def predict():
         # "upload_time": datetime.now()
     })
 
+def detect_faces(video_path):
+    detector  = MTCNN()
+    # print("Hi")
+    interval = 60
+    uuid = video_path.split('&')[0].split("/")[5]
+    print(uuid)
+    url = "https://drive.google.com/uc?id={}".format(uuid)
+    output_file = "static/video.mp4"  # Specify the name of the output file
+    print(url)
+    # print(timestamp1)
+    # print(timestamp2)
+    gdown.download(url, output_file, quiet=False)
+    
+    cap = cv2.VideoCapture('static/video.mp4')
+
+
+    frame_count = 0
+    count = 0
+
+    while cap.isOpened():
+        
+        ret, frame = cap.read()
+        
+        if ret != True:
+            break
+        
+        current_time = frame_count / cap.get(cv2.CAP_PROP_FPS)
+        
+        
+        if(current_time % interval == 0):
+            
+            
+            result_list = detector.detect_faces(frame)
+            for results in result_list:
+                if(results['conf'] > 0.99):
+                    x, y, width, height = results['box']
+                    cropped_image = frame[y:y+height, x:x+width]
+                    cv2.imwrite(os.path.join("detected_faces_videos", frame, "_{}.jpg".format(count)))
+                    count += 1
+                    
+        
+        # cv2.imshow('Video with Face Detection', frame)
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     break  
+        frame_count += 1
+                
+    cap.release()
+    cv2.destroyAllWindows()
+    
  
 def identifyImage(folder_path):
     dict = {}
@@ -99,10 +166,11 @@ def identifyImage(folder_path):
     emotions = []
     timestamps = []
     for img in os.listdir(folder_path):
-        emt = ()
-        isDrowsiness = ()
-        time = ()
-        value = isDrowsy(os.path.join(folder_path, img))
+        emt = []
+        isDrowsiness = []
+        time = []
+        # value = isDrowsy(os.path.join(folder_path, img))
+        value=random.randint(1,3)
         if(value == 1):
             isDrowsiness.append("Yes")
             emt.append(-1)
@@ -127,27 +195,42 @@ def identifyImage(folder_path):
 
 
 def isDrowsy(file_path):
-    # image = load_img(file_path, target_size=(224, 224, 3))
-    # img_array = img_to_array(image)
-    # img_array = preprocess_input(img_array)
-    # img_array = np.expand_dims(img_array, axis=0)
-    # model = tf.keras.models.load_model('models/mask_detector.keras')
-    # pred = model.predict(img_array)
     device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    # Load the Vision Transformer model
     pretrained_vit_loaded = torchvision.models.vit_b_16().to(device)
-    pretrained_vit_loaded.load_state_dict(torch.load('pretrained_vit_modified.pth'))
+
+    # Load the modified state dictionary
+    state_dict = torch.load('models/pretrained_vit_modified.pth')
+
+    # Modify the state dictionary keys
+    modified_state_dict = {}
+    for key, value in state_dict.items():
+        # Rename keys if necessary
+        if key.startswith("heads.head.weight"):
+            # Reshape the weight tensor to match the expected dimensions
+            value = value[:2, :]  # Assuming you have only 2 classes
+            modified_state_dict[key] = value
+        elif key.startswith("heads.head.bias"):
+            # Reshape the bias tensor to match the expected dimensions
+            value = value[:2]  # Assuming you have only 2 classes
+            modified_state_dict[key] = value
+        else:
+            modified_state_dict[key] = value
+
+    # Load the modified state dictionary into the model
+    pretrained_vit_loaded.load_state_dict(modified_state_dict)
     pretrained_vit_loaded.eval()  # Set model to evaluation mode
 
-    img = Image.open(file_path)
-
-    # Define the transformation to apply to the image
+    # Load and preprocess the image
     transform = transforms.Compose([
         transforms.Resize((224, 224)),  # Resize the image to match the input size expected by the model
         transforms.ToTensor(),           # Convert the image to a PyTorch tensor
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize the image
     ])
 
-    # Apply the transformation to the image
+    # file_path = "path_to_your_image.jpg"
+    img = Image.open(file_path)
     input_image = transform(img).unsqueeze(0)  # Add a batch dimension
 
     # Pass the input image through the model to obtain the prediction probabilities
@@ -158,6 +241,8 @@ def isDrowsy(file_path):
     predicted_class = torch.argmax(output, dim=1).item()
     if predicted_class == 1:
         return True
+    
+    
 def emotions(file_path):
 
     pipe = pipeline("image-classification", model="dima806/facial_emotions_image_detection")
@@ -255,8 +340,8 @@ def speechRecognition():
 
     # response = requests.post(URL, headers=headers, json=payload, stream=False)
     keywords_dict= {}
-    keywords = keywords(text)
-    keywords_dict['keywords'] = keywords
+    keyword = keywords(text)
+    keywords_dict['keywords'] = keyword
     return keywords_dict
 
 
@@ -290,8 +375,8 @@ def keywords(text):
     else:
         print("Error:", response.text)
     
-    final['keyowrds'] = keywords
-    links = fetchRecommendations(keywords)
+    final['keywords'] = fetched
+    links = fetchRecommendations(fetched)
     final['recommendations']  = links
     return final
 
@@ -299,15 +384,15 @@ def keywords(text):
 def fetchRecommendations(keywords):
     
     for word in keywords:
-        videos_search = VideosSearch(keyword, limit=10)
+        videos_search = VideosSearch(word, limit=3)
 
         video_urls = []
         for video in videos_search.result()["result"]:
             video_urls.append(video["link"])
 
-        for url in video_urls:
-            print(url)
-
+        # for url in video_urls:
+            # print(url)
+        return video_urls
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
