@@ -8,6 +8,9 @@ import gensim
 import os
 
 
+from youtubesearchpython import VideosSearch
+ 
+
 import moviepy.editor as mp 
 import speech_recognition as sr 
 
@@ -251,12 +254,60 @@ def speechRecognition():
     # }
 
     # response = requests.post(URL, headers=headers, json=payload, stream=False)
-    
-    return text_data
+    keywords_dict= {}
+    keywords = keywords(text)
+    keywords_dict['keywords'] = keywords
+    return keywords_dict
 
 
 def keywords(text):
-        pass
+       
+
+    api_key = "9a839909811349021622ac51fbee62f7"
+
+   
+    text = "is do one type of machine learning, which is called supervised learning. Lets take a look at what that means. Supervised machine learning, or more commonly,"
+
+ 
+    url = "https://api.meaningcloud.com/topics-2.0"
+
+
+    params = {
+        "key": api_key,
+        "lang": "en",
+        "txt": text
+    }
+
+ 
+    response = requests.post(url, data=params)
+    fetched = []
+    final = {}
+    if response.status_code == 200:
+   
+        topics = response.json()["concept_list"]
+        for topic in topics:
+            fetched.append(topic["form"])
+    else:
+        print("Error:", response.text)
+    
+    final['keyowrds'] = keywords
+    links = fetchRecommendations(keywords)
+    final['recommendations']  = links
+    return final
+
+# @app.route('/fetchRecommendations', methods=['GET', 'POST'])
+def fetchRecommendations(keywords):
+    
+    for word in keywords:
+        videos_search = VideosSearch(keyword, limit=10)
+
+        video_urls = []
+        for video in videos_search.result()["result"]:
+            video_urls.append(video["link"])
+
+        for url in video_urls:
+            print(url)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
