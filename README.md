@@ -35,7 +35,7 @@ Frontend: React.js
 Backend: Node.js with Express.js
 Database: MongoDB (NoSQL database)
 Cloud Storage: Google Drive 
-Machine Learning (optional): TensorFlow
+Machine Learning : TensorFlow
 Containerization: Docker
 Deployment platform: Google Cloud Platform (GCP) 
 Project Management: Notion 
@@ -45,4 +45,4 @@ Prerequisites:
 
 Node.js and npm (or yarn) installed on your system.
 A cloud storage account (e.g., Google Drive).
- Google Cloud Platform account (or other preferred cloud platform account) for deployment.
+ Google Cloud Platform account for deployment.
